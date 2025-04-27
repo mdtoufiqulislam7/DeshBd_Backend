@@ -13,7 +13,7 @@ app.use(cookieParser());
 //     tempFileDir: '/tmp/'
 // }));
 const port = process.env.PORT
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:5000','*'];
+const allowedOrigins = ['https://deshbd.netlify.app', 'http://localhost:5000','*'];
 app.use(cors({
     origin: function (origin, callback) {
         if (!origin) return callback(null, true);
