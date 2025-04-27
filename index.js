@@ -34,11 +34,11 @@ app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
 const userRoute = require('./router/userRoute')
-const userAddress = require('../Backend/router/address.router')
-const category = require('../Backend/router/category.route')
-const subCategory = require('../Backend/router/subCategory.router')
-const product = require('../Backend/router/product.router')
-const cart = require('../Backend/router/cart.router')
+const userAddress = require('./router/address.router')
+const category = require('./router/category.route')
+const subCategory = require('./router/subCategory.router')
+const product = require('./router/product.router')
+const cart = require('./router/cart.router')
 app.use('/api/user/',userRoute)
 app.use('/api',userAddress)
 app.use('/api',category)
