@@ -5,8 +5,8 @@ const { createProduct, getproduct, getProductByCategory } = require('../controll
 const router = express.Router()
 
 router.post('/createProduct',auth,upload.single('image'),createProduct)
-router.get('/getproduct',getproduct)
-router.get('/getproduct/:id',getProductByCategory)
+router.get('/getproduct',auth,getproduct)
+router.get('/getproduct/:id',auth,getProductByCategory)
 
 
 module.exports = router
