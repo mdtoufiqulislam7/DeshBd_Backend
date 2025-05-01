@@ -6,6 +6,8 @@ require('dotenv').config(); // ✅ Load env first
 const db = require('./config/db'); // Then use it
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
+
+
 // const fileuploader = require('express-fileupload');
 
 // app.use(fileuploader({
@@ -13,23 +15,28 @@ app.use(cookieParser());
 //     tempFileDir: '/tmp/'
 // }));
 const port = process.env.PORT
-const allowedOrigins = ['https://deshbd.netlify.app', 'http://localhost:5000','*'];
 app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) === -1) {
-            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-            return callback(new Error(msg), false);
-        }
-        return callback(null, true);
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "https://deshbd.netlify.app"
+      ];
+  
+      if (!origin || origin === "null" || allowedOrigins.includes(origin.replace(/\/$/, ""))) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
     },
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-}));
-const upload = require('./middleware/multer')
-// Handle preflight requests
+    credentials: true
+  }));
+
 app.options('*', cors());
+const upload = require('./middleware/multer')
+
+
+// Handle preflight requests
+
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(bodyparser.json());
 
@@ -39,12 +46,15 @@ const category = require('./router/category.route')
 const subCategory = require('./router/subCategory.router')
 const product = require('./router/product.router')
 const cart = require('./router/cart.router')
+
 app.use('/api/user/',userRoute)
 app.use('/api',userAddress)
 app.use('/api',category)
 app.use('/api',subCategory)
 app.use('/api',product)
 app.use('/api',cart)
+const paymentRoutes = require('./router/Order.router');
+app.use('/api/payment', paymentRoutes);
 
 
 app.use((req, res, next) => {
@@ -56,7 +66,7 @@ app.use((req, res, next) => {
 const server = async() => {
     db()
     app.listen(port, () => {
-        console.log(`app is running at https://localhost:${port}`);
+        console.log(`app is running at http://localhost:${port}`);
     });
 };
-server();
+server(); 
