@@ -65,7 +65,7 @@ router.post('/init', async (req, res,next) => {
 
 router.post('/success',auth, async (req, res) => {
     try {
-      const userId = req.userId;
+      
       const tran_id = req.query.tran_id || req.body.tran_id;
       console.log("Received tran_id:", tran_id);
   
