@@ -63,7 +63,7 @@ router.post('/init', async (req, res,next) => {
     }
 });
 
-router.post('/success',auth, async (req, res) => {
+router.post('/success', async (req, res) => {
     try {
       
       const tran_id = req.query.tran_id || req.body.tran_id;
@@ -78,7 +78,7 @@ router.post('/success',auth, async (req, res) => {
       );
   
       if (!order) return res.status(404).send('Order not found');
-  
+      const userId = order.userId
         await UserModel.findByIdAndUpdate(
             userId,
             { $push: { orderHistory: order._id } },
