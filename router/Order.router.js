@@ -89,7 +89,7 @@ router.post('/success', async (req, res) => {
       res.send(`
         <html>
           <head>
-            <meta http-equiv="refresh" content="0; URL='http://localhost:5173/userprofile'" />
+            <meta http-equiv="refresh" content="0; URL='https://deshbd.netlify.app/userprofile'" />
           </head>
           <body>
             Redirecting to your profile...
