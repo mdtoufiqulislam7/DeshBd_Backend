@@ -104,33 +104,15 @@ router.post('/init', async (req, res,next) => {
 
 router.post('/success', async (req, res) => {
   try {
-    const tran_id = req.query.tran_id || req.body.tran_id;
-    if (!tran_id) return res.status(400).send('Missing transaction ID');
+    // TEMP TEST ONLY
+    return res.redirect("https://deshbd.netlify.app/userprofile");
 
-    const order = await OrderModel.findOneAndUpdate(
-      { orderId: tran_id },
-      { payment_status: 'Success', paymentId: req.body.val_id || '' },
-      { new: true }
-    );
-
-    if (!order) return res.status(404).send('Order not found');
-
-    const userId = order.userId;
-    await UserModel.findByIdAndUpdate(
-      userId,
-      { $push: { orderHistory: order._id } },
-      { new: true }
-    );
-
-    // ✅ Use real HTTP redirect
-    res.redirect("https://deshbd.netlify.app/userprofile");
-
+    // ... your existing logic
   } catch (err) {
     console.error('Payment success error:', err.message);
     res.status(500).send('Internal server error');
   }
 });
-  
 
 router.post('/fail', (req, res) => {
     return res.redirect(`${process.env.FRONTEND_URL}/payment-fail`);
