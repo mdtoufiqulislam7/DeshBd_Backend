@@ -66,9 +66,11 @@ app.use((req, res, next) => {
 });
 
 const port = process.env.PORT || 10000; // fallback port
-const serverInstance = app.listen(port, '0.0.0.0', () => {
-    console.log(`✅ Server running at http://0.0.0.0:${port}`);
-});
-serverInstance.keepAliveTimeout = 120000;
-serverInstance.headersTimeout = 120000;
+const server = async() => {
+    db()
+    app.listen(port, () => {
+        console.log(`app is running at http://localhost:${port}`);
+    });
+};
+server(); 
  
