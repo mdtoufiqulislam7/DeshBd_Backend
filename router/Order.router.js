@@ -63,7 +63,7 @@ router.post('/init', async (req, res,next) => {
     }
 });
 
-router.post('/success', async (req, res) => {
+router.all('/success', async (req, res) => {
   try {
     console.log("🔥 Success Route Hit");
     console.log("Headers:", req.headers);
