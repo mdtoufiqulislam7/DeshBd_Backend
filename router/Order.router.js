@@ -67,45 +67,34 @@ router.post('/init', async (req, res,next) => {
     }
 });
 
-router.get('/success', async (req, res) => {
+router.post('/success', async (req, res) => {
   try {
-    const tran_id = req.query.tran_id;
-    const val_id = req.query.val_id || '';
-
-    console.log("Received tran_id:", tran_id);
-    console.log("Received val_id:", val_id);
-
+    const tran_id = req.query.tran_id || req.body.tran_id;
     if (!tran_id) return res.status(400).send('Missing transaction ID');
 
     const order = await OrderModel.findOneAndUpdate(
       { orderId: tran_id },
-      { payment_status: 'Success', paymentId: val_id },
+      { payment_status: 'Success', paymentId: req.body.val_id || '' },
       { new: true }
     );
 
-    if (!order) {
-      console.log("No order found with this tran_id");
-      return res.status(404).send('Order not found');
-    }
+    if (!order) return res.status(404).send('Order not found');
 
-    console.log("Order updated:", order);
+    // Optional: Update user's order history
+    // const userId = order.userId;
+    // await UserModel.findByIdAndUpdate(
+    //   userId,
+    //   { $push: { orderHistory: order._id } },
+    //   { new: true }
+    // );
 
-    res.send(`
-      <html>
-        <head>
-          <meta http-equiv="refresh" content="0; URL='https://deshbd.netlify.app/userprofile'" />
-        </head>
-        <body>
-          Redirecting to your profile...
-        </body>
-      </html>
-    `);
+    // Redirect to frontend route using GET
+    res.redirect(302, 'https://deshbd.netlify.app/userprofile');
   } catch (err) {
     console.error('Payment success error:', err);
     res.status(500).send('Internal server error');
   }
 });
-
 
 // router.post('/success', async (req, res) => {
 //   try {
