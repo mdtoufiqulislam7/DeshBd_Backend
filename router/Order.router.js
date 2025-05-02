@@ -50,7 +50,7 @@ router.post('/init', async (req, res,next) => {
            
         });
         const userid = order.userId
-        await UserModel.findByIdAndUpdate(
+        const pushOrder = await UserModel.findByIdAndUpdate(
             userid,
             { $push: { orderHistory: order._id } },
             { new: true } // Return updated user document
