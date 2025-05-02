@@ -32,6 +32,8 @@ app.use(cors({
   }));
 
 app.options('*', cors());
+app.use(express.json({ limit: '1mb' })); // or increase if needed
+
 const upload = require('./middleware/multer')
 
 
