@@ -46,12 +46,12 @@ router.post('/init', async (req, res,next) => {
             userId: user._id,
             orderId: transactionId,
             totalAmt: total_amount,
-            payment_status: 'Pending',
+            payment_status: 'success',
            
         });
-        const userId = order.userId
+        const userid = order.userId
         await UserModel.findByIdAndUpdate(
-            userId,
+            userid,
             { $push: { orderHistory: order._id } },
             { new: true } // Return updated user document
         );
