@@ -14,7 +14,7 @@ app.use(cookieParser());
 //     useTempFiles: true,
 //     tempFileDir: '/tmp/'
 // }));
-const port = process.env.PORT
+
 app.use(cors({
     origin: (origin, callback) => {
       const allowedOrigins = [
@@ -65,10 +65,10 @@ app.use((req, res, next) => {
     });
 });
 
-const server = async() => {
-    db()
-    app.listen(port, () => {
-        console.log(`app is running at http://localhost:${port}`);
-    });
-};
-server(); 
+const port = process.env.PORT || 10000; // fallback port
+const serverInstance = app.listen(port, '0.0.0.0', () => {
+    console.log(`✅ Server running at http://0.0.0.0:${port}`);
+});
+serverInstance.keepAliveTimeout = 120000;
+serverInstance.headersTimeout = 120000;
+ 
