@@ -50,7 +50,11 @@ router.post('/init', async (req, res,next) => {
            
         });
 
-       
+       await UserModel.findByIdAndUpdate(
+          user._id,
+          { $push: { orderHistory: order._id } },
+          { new: true }
+        );
 
         // ✅ Initiate SSLCommerz
         const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
@@ -63,19 +67,21 @@ router.post('/init', async (req, res,next) => {
     }
 });
 
-router.post('/success', async (req, res) => {
+router.get('/success', async (req, res) => {
   try {
-    const tran_id = req.query.tran_id || req.body.tran_id;
+    const tran_id = req.query.tran_id;
+    const val_id = req.query.val_id || '';
+
     console.log("Received tran_id:", tran_id);
+    console.log("Received val_id:", val_id);
 
     if (!tran_id) return res.status(400).send('Missing transaction ID');
 
     const order = await OrderModel.findOneAndUpdate(
       { orderId: tran_id },
-      { payment_status: 'Success', paymentId: req.body.val_id || '' },
+      { payment_status: 'Success', paymentId: val_id },
       { new: true }
     );
-    console.log("Order found:", order);  
 
     if (!order) {
       console.log("No order found with this tran_id");
@@ -99,6 +105,44 @@ router.post('/success', async (req, res) => {
     res.status(500).send('Internal server error');
   }
 });
+
+
+// router.post('/success', async (req, res) => {
+//   try {
+//     const tran_id = req.query.tran_id || req.body.tran_id;
+//     console.log("Received tran_id:", tran_id);
+
+//     if (!tran_id) return res.status(400).send('Missing transaction ID');
+
+//     const order = await OrderModel.findOneAndUpdate(
+//       { orderId: tran_id },
+//       { payment_status: 'Success', paymentId: req.body.val_id || '' },
+//       { new: true }
+//     );
+//     console.log("Order found:", order);  
+
+//     if (!order) {
+//       console.log("No order found with this tran_id");
+//       return res.status(404).send('Order not found');
+//     }
+
+//     console.log("Order updated:", order);
+
+//     res.send(`
+//       <html>
+//         <head>
+//           <meta http-equiv="refresh" content="0; URL='https://deshbd.netlify.app/userprofile'" />
+//         </head>
+//         <body>
+//           Redirecting to your profile...
+//         </body>
+//       </html>
+//     `);
+//   } catch (err) {
+//     console.error('Payment success error:', err);
+//     res.status(500).send('Internal server error');
+//   }
+// });
 
 // router.post('/success', async (req, res) => {
 //   try {
