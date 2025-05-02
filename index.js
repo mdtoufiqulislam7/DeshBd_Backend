@@ -41,8 +41,8 @@ const upload = require('./middleware/multer')
 
 // Handle preflight requests
 
-// app.use(bodyparser.urlencoded({ extended: true }));
-// app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.json());
 
 const userRoute = require('./router/userRoute')
 const userAddress = require('./router/address.router')
