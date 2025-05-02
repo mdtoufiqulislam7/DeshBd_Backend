@@ -69,6 +69,9 @@ router.post('/init', async (req, res,next) => {
 
 router.post('/success', async (req, res) => {
   try {
+    console.log("🔥 Success Route Hit");
+    console.log("Query:", req.query);
+    console.log("Body:", req.body);
     const tran_id = req.query.tran_id || req.body.tran_id;
     if (!tran_id) return res.status(400).send('Missing transaction ID');
 
