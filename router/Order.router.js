@@ -64,43 +64,41 @@ router.post('/init', async (req, res,next) => {
 });
 
 router.post('/success', async (req, res) => {
-    try {
-      
-      const tran_id = req.query.tran_id || req.body.tran_id;
-      console.log("Received tran_id:", tran_id);
-  
-      if (!tran_id) return res.status(400).send('Missing transaction ID');
-  
-      const order = await OrderModel.findOneAndUpdate(
-        { orderId: tran_id },
-        { payment_status: 'Success', paymentId: req.body.val_id || '' },
-        { new: true }
-      );
-  
-      if (!order) return res.status(404).send('Order not found');
-      // const userId = order.userId
-      //   await UserModel.findByIdAndUpdate(
-      //       userId,
-      //       { $push: { orderHistory: order._id } },
-      //       { new: true } // Return updated user document
-      //   );
-  
-      // HTML redirect for POST
-      res.send(`
-        <html>
-          <head>
-            <meta http-equiv="refresh" content="0; URL='https://deshbd.netlify.app/userprofile'" />
-          </head>
-          <body>
-            Redirecting to your profile...
-          </body>
-        </html>
-      `);
-    } catch (err) {
-      console.error('Payment success error:', err.message, err.stack);
-      res.status(500).send('Internal server error');
+  try {
+    const tran_id = req.query.tran_id || req.body.tran_id;
+    console.log("Received tran_id:", tran_id);
+
+    if (!tran_id) return res.status(400).send('Missing transaction ID');
+
+    const order = await OrderModel.findOneAndUpdate(
+      { orderId: tran_id },
+      { payment_status: 'Success', paymentId: req.body.val_id || '' },
+      { new: true }
+    );
+    console.log("Order found:", order);  
+
+    if (!order) {
+      console.log("No order found with this tran_id");
+      return res.status(404).send('Order not found');
     }
-  });
+
+    console.log("Order updated:", order);
+
+    res.send(`
+      <html>
+        <head>
+          <meta http-equiv="refresh" content="0; URL='https://deshbd.netlify.app/userprofile'" />
+        </head>
+        <body>
+          Redirecting to your profile...
+        </body>
+      </html>
+    `);
+  } catch (err) {
+    console.error('Payment success error:', err);
+    res.status(500).send('Internal server error');
+  }
+});
 
 // router.post('/success', async (req, res) => {
 //   try {
