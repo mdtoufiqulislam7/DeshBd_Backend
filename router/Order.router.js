@@ -63,39 +63,45 @@ router.post('/init', async (req, res,next) => {
     }
 });
 
-router.all('/success', async (req, res) => {
-  try {
-    console.log("🔥 /success route hit");
-    console.log("Method:", req.method);
-    console.log("Headers:", req.headers);
-    console.log("Query:", req.query);
-    console.log("Body:", req.body);
+router.get('/success', async (req, res) => {
+  // Handle GET (redirect from browser after payment)
+  const tran_id = req.query.tran_id;
+  if (!tran_id) return res.status(400).send("Missing transaction ID");
 
-    const tran_id = req.query.tran_id || req.body.tran_id;
-    if (!tran_id) return res.status(400).send('❌ Missing transaction ID');
+  const order = await OrderModel.findOneAndUpdate(
+    { orderId: tran_id },
+    { payment_status: 'Success' },
+    { new: true }
+  );
 
-    const order = await OrderModel.findOneAndUpdate(
-      { orderId: tran_id },
-      { payment_status: 'Success', paymentId: req.body.val_id || '' },
-      { new: true }
-    );
+  if (!order) return res.status(404).send('Order not found');
 
-    if (!order) {
-      console.error("❌ Order not found for tran_id:", tran_id);
-      return res.status(404).send('Order not found');
-    }
+  await UserModel.findByIdAndUpdate(order.userId, {
+    $push: { orderHistory: order._id }
+  });
 
-    await UserModel.findByIdAndUpdate(
-      order.userId,
-      { $push: { orderHistory: order._id } }
-    );
+  return res.redirect('https://deshbd.netlify.app/userprofile');
+});
 
-    // ✅ Use real redirect
-    res.redirect('https://deshbd.netlify.app/userprofile');
-  } catch (err) {
-    console.error('🔥 Payment success error:', err.message);
-    res.status(500).send('🔥 Internal server error');
-  }
+router.post('/success', async (req, res) => {
+  // Handle POST (server-to-server IPN callback, if used)
+  const tran_id = req.body.tran_id;
+  const val_id = req.body.val_id;
+  if (!tran_id) return res.status(400).send("Missing transaction ID");
+
+  const order = await OrderModel.findOneAndUpdate(
+    { orderId: tran_id },
+    { payment_status: 'Success', paymentId: val_id },
+    { new: true }
+  );
+
+  if (!order) return res.status(404).send('Order not found');
+
+  await UserModel.findByIdAndUpdate(order.userId, {
+    $push: { orderHistory: order._id }
+  });
+
+  return res.status(200).json({ message: "Payment confirmed" });
 });
 // router.post('/success', async (req, res) => {
 //   try {
