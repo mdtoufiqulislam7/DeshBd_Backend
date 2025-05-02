@@ -74,7 +74,7 @@ router.post('/success', async (req, res) => {
 
     const order = await OrderModel.findOneAndUpdate(
       { orderId: tran_id },
-      { payment_status: 'Success', paymentId: req.body.val_id || '' },
+      { payment_status: 'Success', paymentId: req.body?.val_id || '' },
       { new: true }
     );
 
