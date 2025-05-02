@@ -1,7 +1,7 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const bodyparser = require('body-parser');
+
 require('dotenv').config(); // ✅ Load env first
 const db = require('./config/db'); // Then use it
 const cookieParser = require("cookie-parser");
@@ -41,8 +41,6 @@ const upload = require('./middleware/multer')
 
 // Handle preflight requests
 
-app.use(bodyparser.urlencoded({ extended: true }));
-app.use(bodyparser.json());
 
 const userRoute = require('./router/userRoute')
 const userAddress = require('./router/address.router')
